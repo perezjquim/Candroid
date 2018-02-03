@@ -10,7 +10,7 @@ public class Button extends JButton
 		super(label);
 		addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e)
 		{
-			action.run();	
+			new Thread(()->action.run()).start();	
 		}});
 	}
 }

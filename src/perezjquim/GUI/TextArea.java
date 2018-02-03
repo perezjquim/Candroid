@@ -13,11 +13,29 @@ public class TextArea extends JTextArea
   public static final int HEIGHT_MEDIUM = 10;
   public static final int HEIGHT_SMALL = 1;
 
-	public TextArea(int height, int width)
-	{
-		super(height,width);
-		this.setLineWrap(true);
-		this.setWrapStyleWord(false);
-		this.setEditable(false);
-	}
+  public TextArea(int height, int width)
+  {
+  	super(height,width);
+  	this.setLineWrap(true);
+  	this.setWrapStyleWord(false);
+  	this.setEditable(false);
+  }
+
+  public TextArea()
+  {
+    super(HEIGHT_MEDIUM,WIDTH_MEDIUM);
+    this.setLineWrap(true);
+    this.setWrapStyleWord(false);
+    this.setEditable(false);
+  }
+
+  public void append(String s)
+  {
+    setText(getText()+"\n"+s);
+  }
+
+  public void clear()
+  {
+    setText("");
+  }
 }
