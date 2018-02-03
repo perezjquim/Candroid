@@ -5,52 +5,52 @@ import javax.swing.*;
 
 public class Cmd
 {
-	public static void exec(String cmd)
+	public static void exec(String cmd) throws IOException
 	{
 		try
 		{
 			Process p = Runtime.getRuntime().exec(cmd);
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String[] cmd)
+	public static void exec(String[] cmd) throws IOException
 	{
 		try
 		{
 			Process p = Runtime.getRuntime().exec(cmd);
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String cmd,File directory)
+	public static void exec(String cmd,File directory) throws IOException
 	{
 		try
 		{
 			Process p = Runtime.getRuntime().exec(cmd,null,directory);
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String[] cmd,File directory)
+	public static void exec(String[] cmd,File directory) throws IOException
 	{
 		try
 		{
 			Process p = Runtime.getRuntime().exec(cmd,null,directory);
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
 
-	public static void exec(String cmd, JTextArea output)
+	public static void exec(String cmd, JTextArea output) throws IOException
 	{
 		try
 		{
@@ -61,11 +61,11 @@ public class Cmd
 
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String[] cmd, JTextArea output)
+	public static void exec(String[] cmd, JTextArea output) throws IOException
 	{
 		try
 		{
@@ -76,11 +76,11 @@ public class Cmd
 
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String cmd, JTextArea output, File directory)
+	public static void exec(String cmd, JTextArea output, File directory) throws IOException
 	{
 		try
 		{
@@ -91,11 +91,11 @@ public class Cmd
 
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 
-	public static void exec(String[] cmd, JTextArea output, File directory)
+	public static void exec(String[] cmd, JTextArea output, File directory) throws IOException
 	{
 		try
 		{
@@ -106,7 +106,7 @@ public class Cmd
 
 			p.waitFor();
 		}
-		catch (InterruptedException | IOException e)
+		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 	}
 	

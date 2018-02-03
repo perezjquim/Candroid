@@ -2,6 +2,7 @@ package candroid;
 import perezjquim.GUI.*;
 import perezjquim.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
 public class candroid
@@ -46,6 +47,7 @@ public class candroid
 		Button btnCompile = new Button("Compile and execute",()->
 			{
 				compileProject();
+				installProject();
 			});
 		panModule.add(btnCompile);
 		main.add(panModule);
@@ -65,13 +67,29 @@ public class candroid
 		TextArea hidden = new TextArea();
 
 		String[] cmdGetIDs = { "/bin/sh","-c", adb + "devices -l | awk '{print $1}' | awk 'NF' | grep -v -x -F 'List' " };
-		Cmd.exec(cmdGetIDs,hidden);
+		try
+		{
+			Cmd.exec(cmdGetIDs,hidden);
+		}
+		catch (IOException e)
+		{ 
+			e.printStackTrace();
+			IO.popup("An error occured. Make sure:\n - Android SDK is located in ~/Android-sdk.");
+		}		
 		devIDs = hidden.getText().trim().split("\n");
 		
 		hidden.clear();
 
 		String[] cmdGetNames = { "/bin/sh","-c", adb + "devices -l | awk '{print $5}' | cut -f2 -d ':' | awk 'NF' " };
-		Cmd.exec(cmdGetNames,hidden);
+		try
+		{
+			Cmd.exec(cmdGetNames,hidden);
+		}
+		catch (IOException e)
+		{ 
+			e.printStackTrace();
+			IO.popup("An error occured. Make sure:\n - Android SDK is located in ~/Android-sdk.");
+		}		
 		devNames = hidden.getText().trim().split("\n");
 
 		devicesList.removeAllItems();
@@ -90,12 +108,37 @@ public class candroid
 
 	private static void compileProject()
 	{
-		console.getTextArea().setText("@@@@@COMPILING...@@@@@");
-		Cmd.exec("./gradlew --stop",projectDirectory);
-		Cmd.exec("./gradlew :"+moduleName.getText()+":assembleDebug", console.getTextArea(), projectDirectory);
-		Cmd.exec("./gradlew --stop",projectDirectory);
-		console.getTextArea().append("@@@@@DONE!@@@@@");
-		IO.popup("Operation complete!");
+		console.getTextArea().setText("@@@@@BUILDING...@@@@@");
+		try
+		{
+			Cmd.exec("./gradlew --stop",projectDirectory);
+			Cmd.exec("./gradlew :"+moduleName.getText()+":assembleDebug", console.getTextArea(), projectDirectory);
+			Cmd.exec("./gradlew --stop",projectDirectory);
+			console.getTextArea().append("@@@@@BUILD COMPLETE!@@@@@");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			IO.popup("An error occured. Make sure:\n - Your device is connected\n - You selected a valid Android Studio Project folder");
+			console.getTextArea().append("@@@@@BUILD FAILED!@@@@@");
+		}
+
 	}
 
+	private static void installProject()
+	{
+		int selectedDevice = devicesList.getSelectedIndex();
+		console.getTextArea().append("@@@@@INSTALLING...@@@@@");
+		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+moduleName.getText()+"/build/outputs/apk/debug/mobile-debug.apk /data/local/tmp/candroid-uploaded-apk";
+		String cmdInstall = adb +" -s "+devIDs[selectedDevice] +" shell pm install -t -r '/data/local/tmp/candroid-uploaded-apk'";
+		try
+		{
+			Cmd.exec(cmdPush,console.getTextArea());
+			Cmd.exec(cmdInstall,console.getTextArea());
+		}
+		catch (IOException e)
+		{ e.printStackTrace(); }
+		console.getTextArea().append("@@@@@DONE!@@@@@");
+		IO.popup("Done!");
+	}
 }
