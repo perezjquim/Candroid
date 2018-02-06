@@ -44,12 +44,17 @@ public class candroid
 		Panel panModule = new Panel("Module to be compiled");
 		moduleName = new TextField();
 		panModule.add(moduleName);
-		Button btnCompile = new Button("Compile and execute",()->
+		Button btnCompile = new Button("Compile and transfer",()->
 			{
 				compileProject();
-				installProject();
+				transferProject();
+			});
+		Button btnTransfer = new Button("Transfer",()->
+			{
+				transferProject();
 			});
 		panModule.add(btnCompile);
+		panModule.add(btnTransfer);
 		main.add(panModule);
 
 
@@ -125,7 +130,7 @@ public class candroid
 
 	}
 
-	private static void installProject()
+	private static void transferProject()
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
 		console.getTextArea().append("@@@@@INSTALLING...@@@@@");
