@@ -133,13 +133,13 @@ public class candroid
 	private static void transferProject()
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
-		console.getTextArea().append("@@@@@TRANSFERING...@@@@@");
 		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+moduleName.getText()+"/build/outputs/apk/debug/"+moduleName.getText()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
-		console.getTextArea().append("@@@@@INSTALLING...@@@@@");
 		String cmdInstall = adb +" -s "+devIDs[selectedDevice] +" shell pm install -t -r '/data/local/tmp/candroid-uploaded-apk'";
 		try
 		{
+			console.getTextArea().append("@@@@@TRANSFERING...@@@@@");
 			Cmd.exec(cmdPush,console.getTextArea());
+			console.getTextArea().append("@@@@@INSTALLING...@@@@@");
 			Cmd.exec(cmdInstall,console.getTextArea());
 		}
 		catch (IOException e)
