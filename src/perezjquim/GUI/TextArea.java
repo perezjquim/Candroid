@@ -31,7 +31,7 @@ public class TextArea extends JTextArea
 
   public void append(String s)
   {
-    setText(getText()+"\n"+s);
+    setText(getText()+s+"\n");
   }
 
   public void clear()
