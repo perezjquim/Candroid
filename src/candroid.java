@@ -46,11 +46,13 @@ public class candroid
 		panModule.add(moduleName);
 		Button btnCompile = new Button("Compile and transfer",()->
 			{
+				console.getTextArea().clear();			
 				compileProject();
 				transferProject();
 			});
 		Button btnTransfer = new Button("Transfer",()->
 			{
+				console.getTextArea().clear();					
 				transferProject();
 			});
 		panModule.add(btnCompile);
@@ -113,9 +115,9 @@ public class candroid
 
 	private static void compileProject()
 	{
-		console.getTextArea().setText("@@@@@BUILDING...@@@@@");
 		try
 		{
+			console.getTextArea().append("@@@@@BUILDING...@@@@@");			
 			Cmd.exec("./gradlew --stop",projectDirectory);
 			Cmd.exec("./gradlew :"+moduleName.getText()+":assembleDebug", console.getTextArea(), projectDirectory);
 			Cmd.exec("./gradlew --stop",projectDirectory);
