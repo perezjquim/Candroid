@@ -10,11 +10,12 @@ public class candroid
 	private static GUI main;
 	private static File projectDirectory;
 	private static TextArea currentDir;
-	private static TextField moduleName;
 	private static ScrollableTextArea console;
 	private static JComboBox<String> devicesList;
-	private static String adb = "/home/"+System.getProperty("user.name")+"/Android-sdk/platform-tools/adb ";
+	private static JComboBox<String> modulesList;
 	private static String[] devIDs, devNames;
+	private static final String[] notModules = { ".idea", ".git" , ".gradle" , "build" , "gradle" };
+	private static final String adb = "/home/"+System.getProperty("user.name")+"/Android-sdk/platform-tools/adb ";
 	public static void main(String[] args)
 	{
 		main = new GUI("Candroid");
@@ -26,6 +27,7 @@ public class candroid
 			{
 				projectDirectory = IO.askFolder();
 				currentDir.setText(projectDirectory.getAbsolutePath());
+				refreshModuleList();
 			});
 		panProject.add(currentDir);
 		panProject.add(btnChooseDir);
@@ -33,6 +35,7 @@ public class candroid
 
 		Panel panDevices = new Panel("Select a device");
 		devicesList = new JComboBox<String>(new String[]{""});
+		refreshDeviceList();
 		Button btnDevices = new Button("Refresh devices list",()->
 			{
 				refreshDeviceList();
@@ -41,23 +44,31 @@ public class candroid
 		panDevices.add(btnDevices);
 		main.add(panDevices);
 
-		Panel panModule = new Panel("Module to be compiled");
-		moduleName = new TextField();
-		panModule.add(moduleName);
+		Panel panModules = new Panel("Module to be compiled");
+		modulesList = new JComboBox<String>(new String[]{""});
+		Button btnModules = new Button("Refresh modules list",()->
+			{
+				refreshModuleList();
+			});
+		panModules.add(modulesList);
+		panModules.add(btnModules);
+		main.add(panModules);
+
+		Panel panOperations= new Panel("Operations");
 		Button btnCompile = new Button("Compile and transfer",()->
 			{
 				console.getTextArea().clear();			
 				compileProject();
 				transferProject();
 			});
-		Button btnTransfer = new Button("Transfer",()->
+		Button btnTransfer = new Button("Transfer only",()->
 			{
 				console.getTextArea().clear();					
 				transferProject();
 			});
-		panModule.add(btnCompile);
-		panModule.add(btnTransfer);
-		main.add(panModule);
+		panOperations.add(btnCompile);
+		panOperations.add(btnTransfer);
+		main.add(panOperations);
 
 
 		Panel panConsole = new Panel();
@@ -96,7 +107,8 @@ public class candroid
 		{ 
 			e.printStackTrace();
 			IO.popup("An error occured. Make sure:\n - Android SDK is located in ~/Android-sdk.");
-		}		
+		}
+
 		devNames = hidden.getText().trim().split("\n");
 
 		devicesList.removeAllItems();
@@ -113,13 +125,38 @@ public class candroid
 		}
 	}
 
+	private static void refreshModuleList()
+	{
+		modulesList.removeAllItems();
+
+		File[] modulesDir = new File(currentDir.getText()).listFiles(new FileFilter() {
+		    @Override
+		    public boolean accept(File file) {
+		        return file.isDirectory() 
+		        && !Arrays.asList(notModules).contains(file.getName());
+		    }
+		});
+
+		if(modulesDir.length > 0)
+		{
+			for(File directory : modulesDir)
+				modulesList.addItem(directory.getName());
+		}
+
+		else
+		{
+			IO.popup("An error occured. Make sure you selected the correct folder.");
+			modulesList.addItem("");
+		}
+	}
+
 	private static void compileProject()
 	{
 		try
 		{
 			console.getTextArea().append("@@@@@BUILDING...@@@@@");			
 			Cmd.exec("./gradlew --stop",projectDirectory);
-			Cmd.exec("./gradlew :"+moduleName.getText()+":assembleDebug", console.getTextArea(), projectDirectory);
+			Cmd.exec("./gradlew :"+modulesList.getSelectedItem()+":assembleDebug", console.getTextArea(), projectDirectory);
 			Cmd.exec("./gradlew --stop",projectDirectory);
 			console.getTextArea().append("@@@@@BUILD COMPLETE!@@@@@");
 		}
@@ -135,7 +172,7 @@ public class candroid
 	private static void transferProject()
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
-		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+moduleName.getText()+"/build/outputs/apk/debug/"+moduleName.getText()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
+		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+modulesList.getSelectedItem()+"/build/outputs/apk/debug/"+modulesList.getSelectedItem()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
 		String cmdInstall = adb +" -s "+devIDs[selectedDevice] +" shell pm install -t -r '/data/local/tmp/candroid-uploaded-apk'";
 		try
 		{
