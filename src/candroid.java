@@ -4,6 +4,10 @@ import perezjquim.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.xml.xpath.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public class candroid
 {
@@ -14,6 +18,7 @@ public class candroid
 	private static JComboBox<String> devicesList;
 	private static JComboBox<String> modulesList;
 	private static String[] devIDs, devNames;
+	private static String packageName;
 	private static final String[] notModules = { ".idea", ".git" , ".gradle" , "build" , "gradle" };
 	private static final String adb = "/home/"+System.getProperty("user.name")+"/Android-sdk/platform-tools/adb ";
 	public static void main(String[] args)
@@ -57,14 +62,17 @@ public class candroid
 		Panel panOperations= new Panel("Operations");
 		Button btnCompile = new Button("Compile and transfer",()->
 			{
-				console.getTextArea().clear();			
-				compileProject();
-				transferProject();
+				console.getTextArea().clear();
+				packageName = getPackageName();
+				System.out.println(packageName);
+				compileProject(packageName);
+				transferProject(packageName);
 			});
 		Button btnTransfer = new Button("Transfer only",()->
 			{
-				console.getTextArea().clear();					
-				transferProject();
+				console.getTextArea().clear();
+				packageName = getPackageName();					
+				transferProject(packageName);
 			});
 		panOperations.add(btnCompile);
 		panOperations.add(btnTransfer);
@@ -150,7 +158,7 @@ public class candroid
 		}
 	}
 
-	private static void compileProject()
+	private static void compileProject(String packageName)
 	{
 		try
 		{
@@ -169,7 +177,7 @@ public class candroid
 
 	}
 
-	private static void transferProject()
+	private static void transferProject(String packageName)
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
 		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+modulesList.getSelectedItem()+"/build/outputs/apk/debug/"+modulesList.getSelectedItem()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
@@ -185,5 +193,21 @@ public class candroid
 		{ e.printStackTrace(); }
 		console.getTextArea().append("@@@@@DONE!@@@@@");
 		IO.popup("Done!");
+	}
+
+	private static String getPackageName()
+	{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		Document document = null;
+		try
+		{
+			builder = factory.newDocumentBuilder();
+			document = builder.parse(new File(projectDirectory.getAbsolutePath()+"/"+modulesList.getSelectedItem()+"/src/main/AndroidManifest.xml"));
+		}
+		catch (SAXException | IOException | ParserConfigurationException e)
+		{ e.printStackTrace(); }
+		
+		return document.getDocumentElement().getAttribute("package");
 	}
 }
