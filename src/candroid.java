@@ -64,15 +64,14 @@ public class candroid
 			{
 				console.getTextArea().clear();
 				packageName = getPackageName();
-				System.out.println(packageName);
-				compileProject(packageName);
-				transferProject(packageName);
+				compileProject();
+				transferProject();
 			});
 		Button btnTransfer = new Button("Transfer only",()->
 			{
 				console.getTextArea().clear();
 				packageName = getPackageName();					
-				transferProject(packageName);
+				transferProject();
 			});
 		panOperations.add(btnCompile);
 		panOperations.add(btnTransfer);
@@ -158,7 +157,7 @@ public class candroid
 		}
 	}
 
-	private static void compileProject(String packageName)
+	private static void compileProject()
 	{
 		try
 		{
@@ -177,11 +176,15 @@ public class candroid
 
 	}
 
-	private static void transferProject(String packageName)
+	private static void transferProject()
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
+		 $adb -s $DeviceID shell am start -n "com.example.filipe.socketcontroller/com.example.filipe.socketcontroller.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+
+		String cmdStop = adb + "-s " + devIDs[selectedDevice] + " shell am force-stop " + packageName;
 		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+modulesList.getSelectedItem()+"/build/outputs/apk/debug/"+modulesList.getSelectedItem()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
 		String cmdInstall = adb +" -s "+devIDs[selectedDevice] +" shell pm install -t -r '/data/local/tmp/candroid-uploaded-apk'";
+		//String cmdExec =  adb + "-s "+devIDs[selectedDevice] + " shell am start -n '"+packageName+"'"
 		try
 		{
 			console.getTextArea().append("@@@@@TRANSFERING...@@@@@");
@@ -207,7 +210,7 @@ public class candroid
 		}
 		catch (SAXException | IOException | ParserConfigurationException e)
 		{ e.printStackTrace(); }
-		
+
 		return document.getDocumentElement().getAttribute("package");
 	}
 }
