@@ -5,5 +5,5 @@
 ### Example of use (GUI):
 <img src="http://imgur.com/pnL2AMul.png" />
 
-### <a href="https://raw.githubusercontent.com/perezjquim/Candroid/master/candroid-install.deb">DOWNLOAD</a> (.deb)
+### <a href="https://github.com/perezjquim/Candroid/raw/master/candroid-install.deb">DOWNLOAD</a> (.deb)
 
