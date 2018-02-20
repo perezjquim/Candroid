@@ -7,5 +7,5 @@ update:
 
 repackage:
 	@echo "@Repackaging...@"
-	@dpkg-deb --build candroid-deb candroid-install > /dev/null
+	@dpkg-deb --build candroid-deb candroid-install.deb > /dev/null
 	@echo "@Repackaged!@"
