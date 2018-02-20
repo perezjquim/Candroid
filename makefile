@@ -1,9 +1,11 @@
-FILES := $(shell find . -name "*.java")
-main: compile exec
-compile:
-	@echo 'Compiling..'
-	@javac -d bin $(FILES) -Xlint:unchecked
-	@jar -cvmf manifest.txt candroid.jar -C bin . > /dev/null
-exec:
-	@echo 'Executing..'
-	@java -jar candroid.jar
+main: update repackage
+
+update:
+	@echo "@Updating files...@"
+	@cp candroid-java/candroid.jar candroid-deb/opt/candroid/candroid.jar
+	@echo "@Files updated!@"
+
+repackage:
+	@echo "@Repackaging...@"
+	@dpkg-deb --build candroid-deb candroid-install > /dev/null
+	@echo "@Repackaged!@"

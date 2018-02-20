@@ -1,0 +1,5 @@
+[Desktop Entry]
+Version=1.0
+Name=Candroid
+Exec=java -jar /opt/candroid/candroid.jar
+Type=Application

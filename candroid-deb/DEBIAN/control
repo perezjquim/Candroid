@@ -1,0 +1,5 @@
+Package: Candroid
+Maintainer: perezjquim
+Architecture: all
+Version: 1.0
+Description: Compilation/Transfer interface for Android Studio projects
