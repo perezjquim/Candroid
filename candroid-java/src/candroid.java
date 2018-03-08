@@ -179,7 +179,7 @@ public class candroid
 	private static void transferProject()
 	{
 		int selectedDevice = devicesList.getSelectedIndex();
-		 $adb -s $DeviceID shell am start -n "com.example.filipe.socketcontroller/com.example.filipe.socketcontroller.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+		 //$adb -s $DeviceID shell am start -n "com.example.filipe.socketcontroller/com.example.filipe.socketcontroller.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
 
 		String cmdStop = adb + "-s " + devIDs[selectedDevice] + " shell am force-stop " + packageName;
 		String cmdPush = adb +" -s "+devIDs[selectedDevice] +" push "+projectDirectory.getAbsolutePath() +"/"+modulesList.getSelectedItem()+"/build/outputs/apk/debug/"+modulesList.getSelectedItem()+"-debug.apk /data/local/tmp/candroid-uploaded-apk";
